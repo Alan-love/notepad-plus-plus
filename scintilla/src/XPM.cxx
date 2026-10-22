@@ -6,10 +6,12 @@
 // The License.txt file describes the conditions under which this software may be distributed.
 
 #include <cstdlib>
+#include <cstdint>
 #include <cstring>
 #include <climits>
 
 #include <stdexcept>
+#include <utility>
 #include <string_view>
 #include <vector>
 #include <map>
@@ -117,7 +119,7 @@ void XPM::Init(const char *const *linesForm) {
 	if (!linesForm)
 		return;
 
-	std::fill(colourCodeTable, std::end(colourCodeTable), ColourRGBA(0, 0, 0));
+	std::fill(colourCodeTable, std::end(colourCodeTable), black);
 	const char *line0 = linesForm[0];
 	width = atoi(line0);
 	line0 = NextField(line0);

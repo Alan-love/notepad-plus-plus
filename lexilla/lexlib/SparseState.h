@@ -17,7 +17,8 @@ class SparseState {
 	struct State {
 		Sci_Position position;
 		T value;
-		constexpr State(Sci_Position position_, T value_) noexcept : position(position_), value(value_) {
+		constexpr State(Sci_Position position_, T value_) noexcept :
+			position(position_), value(std::move(value_)) {
 		}
 		inline bool operator<(const State &other) const noexcept {
 			return position < other.position;
@@ -42,7 +43,7 @@ public:
 	void Set(Sci_Position position, T value) {
 		Delete(position);
 		if (states.empty() || (value != states[states.size()-1].value)) {
-			states.push_back(State(position, value));
+			states.emplace_back(position, value);
 		}
 	}
 	T ValueAt(Sci_Position position) {
@@ -61,7 +62,7 @@ public:
 		}
 	}
 	bool Delete(Sci_Position position) {
-		typename stateVector::iterator low = Find(position);
+		const typename stateVector::iterator low = Find(position);
 		if (low != states.end()) {
 			states.erase(low, states.end());
 			return true;
@@ -79,7 +80,7 @@ public:
 
 		bool different = true;
 		bool changed = false;
-		typename stateVector::iterator low = Find(other.positionFirst);
+		const typename stateVector::iterator low = Find(other.positionFirst);
 		if (static_cast<size_t>(states.end() - low) == other.states.size()) {
 			// Same number in other as after positionFirst in this
 			different = !std::equal(low, states.end(), other.states.begin());
